@@ -47,8 +47,12 @@ def repartir_cartas(cartas_iniciales,repeticiones):
     """    
     combinaciones={}
     for i in range(1,repeticiones+1):
-        cartas_aleatorias = cartas_iniciales 
-        # Mismo error que antes. Se debe usar dict.update({key:object}) para añadir a un diccionario
+        cartas_aleatorias = []
+        # Tambien se están eliminando las cartas iniciales con 
+        # cartas_aleatorias = cartas_iniciales
+        # No hay que enlazarlas con =, hay que usar array.copy()
+        cartas_aleatorias = cartas_iniciales.copy()
+        # Se debe usar dict.update({key:object}) para añadir a un diccionario
         combinaciones.update({
             "repeticion"+str(i): []
             })
@@ -56,7 +60,8 @@ def repartir_cartas(cartas_iniciales,repeticiones):
             carta=random.choice(cartas_aleatorias)
             combinaciones["repeticion"+str(i)].append(carta)
             cartas_aleatorias.remove(carta)
-
+    print(combinaciones)
+    
     return combinaciones
 
     

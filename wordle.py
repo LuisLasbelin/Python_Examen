@@ -1,6 +1,6 @@
 import math
 from operator import contains
-from random import random
+from random import random, choice
 
 def choose_secret(filename):
     """Dado un nombre de fichero, esta funcionn devuelve una palabra aleatoria de este fichero transformada a mayÃºsculas.
@@ -112,12 +112,11 @@ def choose_secret_advanced(filename):
     # Si hay menos de 15 palabras el archivo no es valido
     if len(filtradas) < 15:
         raise ValueError(f'El archivo {filename}.txt tiene menos de 15 palabras válidas.')
-    # Elige 15 palabras al azar, puede hacerse de otra forma pero esta es rapida de escribir
-    while len(selected) < 15:
-        rand = math.floor(random() * len(filtradas))
-        # No esta en la lista
-        if not (contains(selected, filtradas[rand])):
-            selected.append(filtradas[rand].upper())
+    # Elige 15 palabras únicas al azar 
+    for i in range(0,15):
+        rand = choice(filtradas)
+        selected.append(rand.upper())
+        filtradas.remove(rand)
 
     rand = math.floor(random() * len(selected))
     secret = selected[rand]
