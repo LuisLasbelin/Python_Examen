@@ -33,15 +33,21 @@ def compare_words(word, secret):
       same_position: Lista de posiciones de word cuyas letras coinciden en la misma posiciÃ³n en secret. En el caso anterior: [0]
       same_letter: Lista de posiciones de word cuyas letras estÃ¡n en secret pero en posiciones distintas. En el caso anterior: [1,2]
     """
-    same_position = ""
-    same_letter = ""
+    same_position = []
+    same_letter = []
 
     for i in range(len(word)):
         # Si la letra esta en esa posicion
-        if(word[i] == secret[i]):
-            add(same_letter, )
+        if(word[i].upper() == secret[i]):
+            same_position.append(i)
 
-def print_word():
+    for i in range(len(word)):
+        # Si la letra no esta en esa posicion pero la contiene
+        if(contains(secret, word[i].upper())):
+            same_letter.append(i)
+
+    return same_position, same_letter
+def print_word(word, same_letter_position, same_letter):
     """Dada una palabra, una lista same_position y otra lista same_letter, esta funciÃ³n crearÃ¡ un string donde aparezcan en mayÃºsculas las letras de la palabra que ocupen las posiciones de same_position, en minÃºsculas las letras de la palabra que ocupen las posiciones de same_letter y un guiÃ³n (-) en el resto de posiciones
     Args:
       word: Una palabra. Ej. "CAMPO"
@@ -50,7 +56,14 @@ def print_word():
     Returns:
       transformed: La palabra aplicando las transformaciones. En el caso anterior: "Cam--"
     """
-    
+    transformed = []
+    for i in range(len(word)):
+        transformed.append("-")
+    for i in same_letter:
+        transformed[i] = word[i].lower()
+    for i in same_position:
+        transformed[i] = word[i].upper()
+    return str(transformed)
 def choose_secret_advanced():
     """Dado un nombre de fichero, esta funciÃ³n filtra solo las palabras de 5 letras que no tienen acentos (Ã¡,Ã©,Ã­,Ã³,Ãº). De estas palabras, la funciÃ³n devuelve una lista de 15 aleatorias no repetidas y una de estas 15, se selecciona aleatoriamente como palabra secret.
     Args:
@@ -76,8 +89,8 @@ if __name__ == "__main__":
     print("Palabra a adivinar: "+secret)#Debug: esto es para que sepas la palabra que debes adivinar
     for repeticiones in range(0,6):
         word = input("Introduce una nueva palabra: ")
-        same_position, same_letter = compare_words()
-        resultado=print_word()
+        same_position, same_letter = compare_words(word, secret)
+        resultado=print_word(word, same_position, same_letter)
         print(resultado)
         if word == secret:
             print("HAS GANADO!!")
