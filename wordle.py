@@ -1,7 +1,6 @@
 import math
-from operator import add, contains
+from operator import contains
 from random import random
-from select import select
 
 def choose_secret(filename):
     """Dado un nombre de fichero, esta funcionn devuelve una palabra aleatoria de este fichero transformada a mayÃºsculas.
@@ -21,6 +20,9 @@ def choose_secret(filename):
     f.close();
 
     palabras = archivo.split()
+    # Si no hay palabras, esta mal
+    if(len(palabras) < 1):
+        raise ValueError(f'El archivo {filename}.txt no tiene palabras.')
     rand = math.floor(random() * len(palabras))
     secret = palabras[rand].upper()
     return secret
@@ -36,6 +38,9 @@ def compare_words(word, secret):
     """
     same_position = []
     same_letter = []
+
+    if not(len(word) == len(secret)):
+        raise ValueError(f'La longitud de la palabra introducida {word} no es la misma que el secreto. Tiene que tener 5 letras.')
 
     for i in range(len(word)):
         # Si la letra esta en esa posicion
@@ -60,10 +65,17 @@ def print_word(word, same_letter_position, same_letter):
     transformed = []
     for i in range(len(word)):
         transformed.append("-")
-    for i in same_letter:
-        transformed[i] = word[i].lower()
-    for i in same_position:
-        transformed[i] = word[i].upper()
+    # Si same_position o same_letter recibidos por print_word no son listas.
+    # Si same_position o same_letter recibidos por print_word contienen alg´un valor
+    # negativo o mayor que la longitud de la palabra
+    # Si algo falla en estas asignaciones de array es que no habia valores correctos.
+    try:
+        for i in same_letter:
+            transformed[i] = word[i].lower()
+        for i in same_letter_position:
+            transformed[i] = word[i].upper()
+    except:
+        raise ValueError(f'Error al comprobar las listas de posiciones de las letras.')
     # String
     result = ""
     for l in transformed:
@@ -98,28 +110,37 @@ def choose_secret_advanced(filename):
             if(len(palabras[i]) == 5):
                 filtradas.append(palabras[i])
     # Si hay menos de 15 palabras el archivo no es valido
-    if 
+    if len(filtradas) < 15:
+        raise ValueError(f'El archivo {filename}.txt tiene menos de 15 palabras válidas.')
     # Elige 15 palabras al azar, puede hacerse de otra forma pero esta es rapida de escribir
     while len(selected) < 15:
         rand = math.floor(random() * len(filtradas))
         # No esta en la lista
-        if not (contains(selected, palabras[rand])):
-            selected.append(palabras[rand].upper())
+        if not (contains(selected, filtradas[rand])):
+            selected.append(filtradas[rand].upper())
 
     rand = math.floor(random() * len(selected))
     secret = selected[rand]
     return selected, secret
 
 
-def check_valid_word():
+def check_valid_word(selected):
     """Dada una lista de palabras, esta funciÃ³n pregunta al usuario que introduzca una palabra hasta que introduzca una que estÃ© en la lista. Esta palabra es la que devolverÃ¡ la funciÃ³n.
     Args:
       selected: Lista de palabras.
     Returns:
       word: Palabra introducida por el usuario que estÃ¡ en la lista.
     """
-    
+    word = ""
+    while word == "":
+        p = input("Introduce una nueva palabra: ")
+        if(contains(selected, p.upper())):
+            word = p
+        else:
+            print("La palabra no es válida.")
 
+    return word
+    
 if __name__ == "__main__":
     archivo = input("Archivo de palabras: ")
     selected, secret=choose_secret_advanced(archivo)
@@ -127,7 +148,7 @@ if __name__ == "__main__":
     print(selected) #Debug: para ver que selecciona solo palabras sin acentos
     print("Palabra a adivinar: "+secret)#Debug: esto es para que sepas la palabra que debes adivinar
     for repeticiones in range(0,6):
-        word = input("Introduce una nueva palabra: ")
+        word = check_valid_word(selected)
         same_position, same_letter = compare_words(word, secret)
         resultado=print_word(word, same_position, same_letter)
         print(resultado)
